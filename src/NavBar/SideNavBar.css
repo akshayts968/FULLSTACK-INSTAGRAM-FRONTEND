@@ -8,45 +8,84 @@
     border-right-style: solid;
     border-right-color: rgb(38, 38, 38);
     border-right-width: 1px;
+    background-color: #000;
 }
 .Search-Div{
     height: 100vh;
     position: absolute;
     width: 350px;
-    background: aqua;
+    background: #000;
     left: 100%;
     top: 0;
     display: flex;
     flex-direction: column;
-    z-index: 5;
+    z-index: 10;
+    border-right: 1px solid rgb(38, 38, 38);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    overflow: hidden;
 }
 .Search-Bar{
     margin: 0 16px;
     height: 64px;
     margin-bottom: 24px;
-    background-color: magenta;
     display: flex;
+    align-items: flex-end;
+    border-bottom: 1px solid #262626;
+    padding-bottom: 12px;
 }
 .Search-INPUT{
-    padding: 3px 16px;
-    height: 34px;
+    padding: 8px 16px;
+    height: 40px;
     border-radius: 8px;
-    background-color: maroon;
+    background-color: #262626;
     display: flex;
     flex-grow: 1;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+}
+.Search-INPUT:focus {
+    background-color: #363636;
+}
+.Search-INPUT::placeholder {
+    color: #a8a8a8;
 }
 .Recent-Search{
     padding-top: 12px;
-    background-color: gold;
     flex-grow: 1;
-    overflow: scroll;
+    overflow-y: auto;
     scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.Recent-Search::-webkit-scrollbar {
+    display: none;
 }
 .Recent-Search-Head{
     padding-top: 4px;
     margin: 6px 24px 8px;
-    height: 20px;
-    background-color: violet;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.Recent-Search-Head .title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+}
+.Recent-Search-Head .clear-btn {
+    font-size: 14px;
+    color: #0095f6;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+.Recent-Search-Head .clear-btn:hover {
+    color: #fff;
 }
 .sideM{
     display: flex;
@@ -54,29 +93,56 @@
     flex-direction: column;
     justify-content: space-between;
 }
-.iconDiv,.sideM{
+.iconDiv, .sideM{
     color: white;
 }
 .SearchUser{
     padding: 8px 24px;
-    height: 44px;
+    height: 60px;
     background: #000;
     display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+.SearchUser:hover {
+    background-color: #121212;
 }
 .Search-img{
-    height: 100%;
-    aspect-ratio: 1;
-    background-color: aqua;
+    height: 44px;
+    width: 44px;
+    background-color: #262626;
     object-fit: cover;
     border-radius: 50%;
 }
 .User-deta{
     flex-grow: 1;
+    margin-left: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.username {
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+}
+.name {
+    color: #a8a8a8;
+    font-size: 12px;
 }
 .Close{
     margin-left: 12px;
-
+    color: #a8a8a8;
 }
+.Close svg {
+    font-size: 18px;
+    transition: color 0.2s;
+}
+.Close:hover svg {
+    color: #fff;
+}
+
 @media screen and (min-width:1264px) {
     .SideNavBar{
         width: 220px;

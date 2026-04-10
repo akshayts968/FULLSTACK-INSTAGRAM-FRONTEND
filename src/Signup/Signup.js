@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './Signup.css';
+
 const SignUpForm = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     name: '',
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,71 +20,129 @@ const SignUpForm = () => {
       ...formData,
       [name]: value,
     });
+    setErrorMsg('');
   };
 
-  const  handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-        const response = await axios.post(`${process.env.REACT_APP_SERVER}/signup`, {
-            username: formData.username,
-            password: formData.password,
-            email:formData.email,
-            name:formData.name
-          });
+    if (!formData.username || !formData.name || !formData.email || !formData.password) {
+      setErrorMsg('Please fill in all fields.');
+      return;
+    }
 
-        const user = response.data;
+    setLoading(true);
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_SERVER}/signup`, {
+        username: formData.username,
+        password: formData.password,
+        email: formData.email,
+        name: formData.name
+      });
+
+      const user = response.data;
       localStorage.setItem('user', JSON.stringify(user));
       navigate("/profile");
     } catch (error) {
-        console.log(error);
+      console.error(error);
+      setErrorMsg(error.response?.data?.message || 'Failed to sign up. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="username">Username:</label><br />
-      <input
-        type="text"
-        id="username"
-        name="username"
-        required
-        value={formData.username}
-        onChange={handleChange}
-      /><br />
-      
-      <label htmlFor="name">Name:</label><br />
-      <input
-        type="text"
-        id="name"
-        name="name"
-        required
-        value={formData.name}
-        onChange={handleChange}
-      /><br />
-      
-      <label htmlFor="email">Email:</label><br />
-      <input
-        type="email"
-        id="email"
-        name="email"
-        required
-        value={formData.email}
-        onChange={handleChange}
-      /><br />
-      
-      <label htmlFor="password">Password:</label><br />
-      <input
-        type="password"
-        id="password"
-        name="password"
-        required
-        value={formData.password}
-        onChange={handleChange}
-      /><br />
-      
-      <input type="submit" value="Sign Up" /><br /><br />
-      <a href="/login">Login</a>
-    </form>
+    <div className="signup-main">
+      <div className="signup-content">
+        <div className="signup-box">
+          {/* Re-using the logo from Login */}
+          <img 
+            className="signup-logo" 
+            src="https://e7.pngegg.com/pngimages/712/1009/png-clipart-letter-instagram-font-instagram-text-logo-thumbnail.png" 
+            alt="Instagram" 
+          />
+          <p className="signup-subtitle">
+            Sign up to see photos and videos from your friends.
+          </p>
+          
+          <button className="signup-btn" style={{ width: '100%', marginBottom: '15px' }} type="button">
+            <i className="fa-brands fa-square-facebook" style={{ marginRight: '8px' }}></i>
+            Log in with Facebook
+          </button>
+          
+          <div className="signup-divider">
+            <div className="line"></div>
+            <span>OR</span>
+            <div className="line"></div>
+          </div>
+
+          <form className="signup-form" onSubmit={handleSubmit}>
+            <div className="input-group">
+              <input
+                className="signup-input"
+                type="email"
+                name="email"
+                placeholder="Email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="input-group">
+              <input
+                className="signup-input"
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="input-group">
+              <input
+                className="signup-input"
+                type="text"
+                name="username"
+                placeholder="Username"
+                required
+                value={formData.username}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="input-group">
+              <input
+                className="signup-input"
+                type="password"
+                name="password"
+                placeholder="Password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <p className="signup-terms">
+              By signing up, you agree to our Terms, Data Policy and Cookies Policy.
+            </p>
+            
+            <button className="signup-btn" type="submit" disabled={loading}>
+              {loading ? <span className="spinner"></span> : 'Sign Up'}
+            </button>
+
+            {errorMsg && <div className="error-banner">{errorMsg}</div>}
+          </form>
+        </div>
+
+        <div className="signup-login-box">
+          <p>
+            Have an account? <a href="/">Log in</a>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 

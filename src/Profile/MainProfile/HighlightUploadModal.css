@@ -1,0 +1,113 @@
+.highlight-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.highlight-modal {
+  background: #262626;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  border: 1px solid #333;
+}
+
+.highlight-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+}
+
+.highlight-modal-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.highlight-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.highlight-input-group label {
+  font-size: 0.85rem;
+  color: #a8a8a8;
+}
+
+.highlight-name-input {
+  background: #121212;
+  border: 1px solid #333;
+  padding: 10px;
+  border-radius: 6px;
+  color: #fff;
+  outline: none;
+}
+
+.highlight-name-input:focus {
+  border-color: #0095f6;
+}
+
+.highlight-file-label {
+  background: #121212;
+  border: 1px solid #333;
+  padding: 15px;
+  border-radius: 6px;
+  text-align: center;
+  cursor: pointer;
+  color: #0095f6;
+  font-weight: 600;
+}
+
+.highlight-file-label:hover {
+  background: #1a1a1a;
+}
+
+.highlight-submit-btn {
+  background: #0095f6;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.highlight-submit-btn:disabled {
+  background: #005c9e;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.highlight-preview {
+  margin-top: 10px;
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}

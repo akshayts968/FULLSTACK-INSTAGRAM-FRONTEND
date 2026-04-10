@@ -1,0 +1,157 @@
+.signup-main {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fafafa;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.signup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 350px;
+}
+
+.signup-box {
+  background-color: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 1px;
+  padding: 30px 40px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.signup-logo {
+  width: 175px;
+  margin: 10px auto 15px;
+}
+
+.signup-subtitle {
+  color: #737373;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+.signup-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px 0 20px;
+}
+
+.signup-divider .line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #dbdbdb;
+}
+
+.signup-divider span {
+  margin: 0 18px;
+  color: #737373;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.signup-input {
+  width: 100%;
+  background: #fafafa;
+  border: 1px solid #dbdbdb;
+  border-radius: 3px;
+  padding: 9px 8px 7px;
+  font-size: 12px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.signup-input:focus {
+  border-color: #a8a8a8;
+}
+
+.signup-btn {
+  background-color: #0095f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.signup-btn:hover:not(:disabled) {
+  background-color: #1877f2;
+}
+
+.signup-btn:disabled {
+  background-color: #b2dffc;
+  cursor: default;
+}
+
+.signup-terms {
+  color: #737373;
+  font-size: 12px;
+  line-height: 16px;
+  margin: 15px 0 10px;
+}
+
+.signup-login-box {
+  background-color: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 1px;
+  padding: 20px;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.signup-login-box p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.signup-login-box a {
+  color: #0095f6;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.error-banner {
+  color: #ed4956;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 2px solid white;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}

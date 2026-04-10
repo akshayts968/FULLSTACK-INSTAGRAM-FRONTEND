@@ -24,3 +24,34 @@
     cursor: pointer;
     outline-color: rgb(0 149 246);
 }
+.INPUT{
+    flex-grow: 1;
+    display: flex;
+    .Iinput{
+        padding-left: 10px;
+        width: 100%;
+        background: transparent;
+        appearance: none;
+        border: none;
+        color: white;
+        outline: none;
+    }
+}
+.INPUT input{
+    width: 100%;
+}
+.MSGSend{
+    width: 31.675px;
+    height: 18px;
+    margin-right: 2px;
+    color: rgb(0, 149, 246);
+    background-color: transparent;
+    appearance: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.MsgImgPreview{
+    display: flex;
+    width: 100%;
+}

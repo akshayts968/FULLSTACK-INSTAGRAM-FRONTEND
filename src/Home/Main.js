@@ -10,44 +10,49 @@ import EmojiPicker from 'emoji-picker-react';
 import Dot3 from '../Profile/Dot3';
 const socket = io(`${process.env.REACT_APP_SERVER}`);
 
-const Main = ({ post, onClick,toggle }) => {
+const Main = ({ post, onClick, toggle }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [comment, setComment] = useState('');
-  const [date,setDate] = useState("");
+  const [date, setDate] = useState("");
+
+  // --- NEW: Check for video and set the display image ---
+  const isVideo = post.videourl && post.videourl.match(/\.(mp4|mov|webm|mkv)$/i);
+  const displayImg = isVideo && post.thumbnailUrl ? post.thumbnailUrl : post.videourl;
+  // ------------------------------------------------------
+
   useEffect(() => {
-      
-      function getDaysDifference() {
-          const givenDate = new Date(post.date);
-          const currentDate = new Date();
-          const differenceInTime = currentDate - givenDate;
-          
-          const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-          if (differenceInDays >= 1) {
-            setDate(`${differenceInDays} d`);
-            return;
-          }
-          
-          const differenceInHours = Math.floor(differenceInTime / (1000 * 3600));
-          if (differenceInHours >= 1) {
-            setDate(`${differenceInHours} hr`);
-            return;
-          }
-          
-          const differenceInMinutes = Math.floor(differenceInTime / (1000 * 60));
-          if (differenceInMinutes >= 1) {
-            setDate(`${differenceInMinutes} min`);
-            return;
-          }
-          
-          setDate(`Just now`);
-        }
-        
-      getDaysDifference();
-    }, [post._id]);
-  const onEmojiClick = (event, emojiObject) => {
-    console.log("hai",emojiObject.target)
-    if (emojiObject ) {
-      setComment(prevComment => prevComment + emojiObject.target);
+    function getDaysDifference() {
+      const givenDate = new Date(post.date);
+      const currentDate = new Date();
+      const differenceInTime = currentDate - givenDate;
+
+      const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+      if (differenceInDays >= 1) {
+        setDate(`${differenceInDays} d`);
+        return;
+      }
+
+      const differenceInHours = Math.floor(differenceInTime / (1000 * 3600));
+      if (differenceInHours >= 1) {
+        setDate(`${differenceInHours} hr`);
+        return;
+      }
+
+      const differenceInMinutes = Math.floor(differenceInTime / (1000 * 60));
+      if (differenceInMinutes >= 1) {
+        setDate(`${differenceInMinutes} min`);
+        return;
+      }
+
+      setDate(`Just now`);
+    }
+
+    getDaysDifference();
+  }, [post._id]);
+
+  const onEmojiClick = (emojiData, event) => {
+    if (emojiData && emojiData.emoji) {
+      setComment(prevComment => prevComment + emojiData.emoji);
     } else {
       console.error('Emoji object or emoji is undefined.');
     }
@@ -98,7 +103,7 @@ const Main = ({ post, onClick,toggle }) => {
 
     const User = JSON.parse(localStorage.getItem('user'));
     try {
-      const response = await axios.put(`${process.env.REACT_APP_SERVER}/post/${postId}`, 
+      const response = await axios.put(`${process.env.REACT_APP_SERVER}/post/${postId}`,
         { comment: comment, post: postId, userId: User._id },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -115,9 +120,11 @@ const Main = ({ post, onClick,toggle }) => {
       console.error("Failed to update database", error);
     }
   };
+
   const handleToggle = () => {
-   toggle();
+    toggle();
   };
+
   return (
     <div className="home-post">
       <div className="post-heading">
@@ -130,9 +137,13 @@ const Main = ({ post, onClick,toggle }) => {
         </span>
         <span className="float-right" onClick={handleToggle}>...</span>
       </div>
+
+      {/* --- UPDATED: Using displayImg here --- */}
       <div className="hPost" onClick={onClick}>
-        <img src={post.videourl} alt="" />
+        <img src={displayImg} alt="Post media" />
       </div>
+      {/* -------------------------------------- */}
+
       <div className="post-detail">
         <div className="post-buttons">
           <span className="ml-2">
@@ -149,7 +160,7 @@ const Main = ({ post, onClick,toggle }) => {
         </div>
         <div className='post-description'>
           <span>
-            <img className='IMG-Des' src={post.postOwner.profile} alt="'Profile Image'"/>
+            <img className='IMG-Des' src={post.postOwner.profile} alt="'Profile Image'" />
           </span>
           <div className='Description'>
             <span className='commentUsername'>{post.postOwner.username}</span>
@@ -158,7 +169,7 @@ const Main = ({ post, onClick,toggle }) => {
         </div>
         <div onClick={onClick} style={{ margin: '5px 0', cursor: 'pointer' }}>View All comment</div>
         <div className="add-Comments">
-          <textarea 
+          <textarea
             onChange={handleInput}
             name="comment"
             className="comment"
@@ -172,7 +183,7 @@ const Main = ({ post, onClick,toggle }) => {
           {showEmojiPicker && (
             <EmojiPicker
               onEmojiClick={onEmojiClick}
-              pickerStyle={{ 
+              pickerStyle={{
                 position: 'absolute',
                 bottom: '0px',
                 right: '0px',

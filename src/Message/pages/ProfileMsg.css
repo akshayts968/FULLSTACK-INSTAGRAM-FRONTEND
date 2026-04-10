@@ -1,0 +1,19 @@
+.ProfileNameMSg{
+    width: 118.875px;
+    height: 25px;
+    color: rgb(245, 245, 245);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 25px;
+}
+.ProfileNameSubMSg{
+    min-width: 138.262px;
+    height: 11px;
+    color: rgb(168, 168, 168);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    width: auto;
+    padding-top: 12px;
+    margin: 10px 0 20px;
+}
