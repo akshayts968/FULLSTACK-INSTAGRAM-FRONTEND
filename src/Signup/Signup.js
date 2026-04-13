@@ -57,9 +57,10 @@ const SignUpForm = () => {
           {/* Re-using the logo from Login */}
           <img 
             className="signup-logo" 
-            src="https://e7.pngegg.com/pngimages/712/1009/png-clipart-letter-instagram-font-instagram-text-logo-thumbnail.png" 
-            alt="Instagram" 
+            src="/pixelforge-logo.png" 
+            alt="PixelForge" 
           />
+          <h2 style={{ margin: '8px 0 6px', color: '#fff' }}>PixelForge</h2>
           <p className="signup-subtitle">
             Sign up to see photos and videos from your friends.
           </p>

@@ -39,7 +39,8 @@ async function DataCheck(event){
                 <div className="auth-right">
                     <div className="auth-box">
                         <div className="auth-logo-wrap">
-                            <img src="https://e7.pngegg.com/pngimages/712/1009/png-clipart-letter-instagram-font-instagram-text-logo-thumbnail.png" alt="" />
+                            <img src="/pixelforge-logo.png" alt="PixelForge" />
+                            <h2 style={{ marginTop: 10, color: '#fff' }}>PixelForge</h2>
                         </div>
                         <div className="auth-form-wrap">
                             <form onSubmit={DataCheck} className="auth-form">

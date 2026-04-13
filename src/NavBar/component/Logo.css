@@ -1,19 +1,30 @@
 .Logo{
     width: fit-content;
-    height: 32px;
+    min-height: 32px;
     padding: 25px 12px 16px;
     margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 .Logo .img1{
-    width: 192px;
-    height: 100%;
-    object-fit: cover;
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+}
+.Logo .logo-text{
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
 }
 .img2{display: none;}
 @media screen and (max-width:1264px) {
-.img1{display: none;}
-.img2{
+.Logo .logo-text{display: none;}
+.Logo .img1{display: none;}
+.Logo .img2{
     width: 24px;
+    height: 24px;
     display: flex;
+    object-fit: contain;
 }
 }
