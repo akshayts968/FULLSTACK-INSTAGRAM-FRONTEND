@@ -129,6 +129,15 @@ const Main = ({ post, onClick, toggle }) => {
     }
   };
 
+  const handleCommentKeyDown = (e) => {
+    if (e.key !== 'Enter') return;
+    if (e.shiftKey) return;
+    e.preventDefault();
+    if (comment.trim()) {
+      commentAdd(null, post._id);
+    }
+  };
+
   const handleToggle = () => {
     toggle();
   };
@@ -231,6 +240,7 @@ const Main = ({ post, onClick, toggle }) => {
         <div className="add-Comments">
           <textarea
             onChange={handleInput}
+            onKeyDown={handleCommentKeyDown}
             name="comment"
             className="comment"
             cols="30"

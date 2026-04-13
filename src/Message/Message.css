@@ -73,7 +73,7 @@
 
 }
 .msgMain{
-    overflow: scroll;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     flex-grow: 1;

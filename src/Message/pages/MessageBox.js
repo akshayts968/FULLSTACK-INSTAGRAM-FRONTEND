@@ -24,7 +24,7 @@ function MessageBox(props) {
 
     const handleInputChange = (e) => {
         setMessage(e.target.value);
-        setToggleBtn(e.target.value.trim() !== "");
+        setToggleBtn(e.target.value.trim() !== "" || mediaFiles.length > 0);
     };
 
     const handleFileUploadClick = () => {
@@ -143,6 +143,15 @@ function MessageBox(props) {
         }
     };
 
+    const handleMessageKeyDown = (e) => {
+        if (e.key !== 'Enter') return;
+        if (e.shiftKey) return;
+        e.preventDefault();
+        if (message.trim() || mediaFiles.length > 0) {
+            handleSubmit();
+        }
+    };
+
     return (
         <div className='MessageBox'>
             {showEmoji && (
@@ -179,11 +188,13 @@ function MessageBox(props) {
             <div className='Message-Box'>
                 <EmojiEmotionsIcon className='Emoji' onClick={() => setShowEmoji(!showEmoji)} style={{ cursor: 'pointer' }} />
                 <div className='INPUT'>
-                    <input 
+                    <textarea
                         className="Iinput"
-                        placeholder='Write Message' 
-                        value={message} 
+                        placeholder='Write Message'
+                        value={message}
                         onChange={handleInputChange}
+                        onKeyDown={handleMessageKeyDown}
+                        rows={1}
                     />
                 </div>
                 

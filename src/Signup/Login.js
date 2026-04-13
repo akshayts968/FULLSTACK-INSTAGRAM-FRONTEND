@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { getSavedAccounts } from '../utils/accountStorage';
 
 function Login() {
 
@@ -11,6 +12,8 @@ function Login() {
     const [password, setPassword] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const [loading, setLoading] = useState(false);
+    const [lastTap, setLastTap] = useState({ accountId: null, time: 0 });
+    const savedAccounts = getSavedAccounts();
 async function DataCheck(event){
     event.preventDefault();
     setErrorMsg('');
@@ -22,7 +25,8 @@ async function DataCheck(event){
         });
       const user = response.data.user;
       localStorage.setItem('user', JSON.stringify(user));
-      navigate("/profile");
+      sessionStorage.setItem('prompt_save_account_after_login', '1');
+      navigate('/home');
       } catch (error) {
         console.error('Login Error:', error);
         setErrorMsg(error.response?.data?.message || 'Invalid credentials. Please try again.');
@@ -30,11 +34,23 @@ async function DataCheck(event){
         setLoading(false);
       }
 }
+
+    const handleSavedAccountTap = (acc) => {
+      const now = Date.now();
+      if (lastTap.accountId === acc._id && now - lastTap.time <= 350) {
+        localStorage.setItem('user', JSON.stringify(acc));
+        navigate('/home');
+        setLastTap({ accountId: null, time: 0 });
+        return;
+      }
+      setLastTap({ accountId: acc._id, time: now });
+    };
+
     return (
         <div className="auth-main">
             <div className="auth-content">
                 <div className="auth-left-visual">
-                    <img src="https://media.gcflearnfree.org/content/633d944b3823fb02e84dce55_10_05_2022/Screen%20Shot%202022-10-10%20at%202.28.19%20PM.png" alt="Preview" />
+                    <img src="https://is.zobj.net/image-server/v1/images?r=KvsSgJSlBmD3ZcjU342RtEx7aRL99lkTHgkmB1ozHiS1oQkMwoaRt4SiMBdpZ1ESdRfmHdMvMt5_bApVd0mOE6LA4zZZfUJAJAfFoKfhgaHaSY2WmJhqjH1YIymX6tbVmAU2HQYiFY_SWrdGBf60daQAa80DxtJuu91yVXO9VOZB4JhxTUgvLti-_uQqIf463ctVMRx0cv3DDd2AcaFIM940f55PRqb-XnAT3A" alt="Preview" />
                 </div>
                 <div className="auth-right">
                     <div className="auth-box">
@@ -77,6 +93,24 @@ async function DataCheck(event){
                                 <button className="auth-link-btn" type="button">Forgot password?</button>
                                 {errorMsg && <div className="auth-error">{errorMsg}</div>}
                             </form>
+                            {savedAccounts.length > 0 && (
+                              <div style={{ marginTop: 12 }}>
+                                <div style={{ color: '#a8a8a8', fontSize: 12, marginBottom: 8 }}>Saved accounts</div>
+                                <div style={{ color: '#8f8f8f', fontSize: 11, marginBottom: 6 }}>Double tap an account to switch</div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                  {savedAccounts.slice(0, 4).map((acc) => (
+                                    <button
+                                      key={acc._id}
+                                      type="button"
+                                      className="auth-link-btn"
+                                      onClick={() => handleSavedAccountTap(acc)}
+                                    >
+                                      Continue as @{acc.username}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                         </div>
                     </div>
                     <div className="auth-switch-box">

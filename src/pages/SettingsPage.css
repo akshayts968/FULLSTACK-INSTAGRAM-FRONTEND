@@ -1,0 +1,103 @@
+.settings-wrap {
+  width: 100%;
+  max-width: 560px;
+  background: #111;
+  border: 1px solid #262626;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.settings-title {
+  color: #fff;
+  margin: 0 0 12px;
+}
+
+.settings-private {
+  color: #ddd;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.settings-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.settings-btn.primary {
+  background: #0095f6;
+  color: #fff;
+}
+
+.settings-btn.danger {
+  background: #3a1f1f;
+  color: #ff9f9f;
+}
+
+.settings-btn.secondary {
+  background: #262626;
+  color: #eee;
+}
+
+.settings-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-switch-block {
+  margin-top: 20px;
+}
+
+.settings-switch-heading {
+  color: #fff;
+  margin: 0 0 8px;
+}
+
+.settings-switch-hint {
+  color: #8f8f8f;
+  font-size: 12px;
+  margin: 0 0 10px;
+}
+
+.settings-empty {
+  color: #a8a8a8;
+}
+
+.settings-account-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  background: #1a1a1a;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.settings-account-row:hover {
+  background: #232323;
+}
+
+.settings-account-row.active {
+  border: 1px solid #3a3a3a;
+  cursor: default;
+}
+
+.settings-account-name {
+  color: #eee;
+}
+
+.settings-account-actions {
+  display: flex;
+  gap: 8px;
+}

@@ -1,9 +1,16 @@
 .explore-page-content {
-  height: 100vh;
+  height: 100%;
+  min-height: 0;
   overflow-y: auto;
   width: 100%;
   padding: 20px 24px 90px;
   box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.explore-page-content::-webkit-scrollbar {
+  display: none;
 }
 
 .explore-title {

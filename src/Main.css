@@ -1,5 +1,5 @@
 .Main{
-    width: 100vw;
+    width: 100%;
     min-height: 100vh;
     background: #000;
     position: relative;
@@ -12,3 +12,57 @@
       flex-direction: row;
     }
   }
+
+.main-save-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+}
+
+.main-save-modal {
+  width: min(92vw, 380px);
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 16px;
+  color: #fff;
+  text-align: center;
+}
+
+.main-save-modal h4 {
+  margin: 0 0 8px;
+}
+
+.main-save-modal p {
+  margin: 0 0 14px;
+  color: #bbb;
+  font-size: 14px;
+}
+
+.main-save-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.main-save-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.main-save-btn.primary {
+  background: #0095f6;
+  color: #fff;
+}
+
+.main-save-btn.ghost {
+  background: #262626;
+  color: #eee;
+}

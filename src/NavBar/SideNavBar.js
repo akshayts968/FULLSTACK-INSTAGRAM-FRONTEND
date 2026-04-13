@@ -12,6 +12,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import ForumIcon from '@mui/icons-material/Forum';
+import CollectionsIcon from '@mui/icons-material/Collections';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
@@ -74,7 +75,8 @@ const icons = [
   <AddBoxOutlinedIcon key="create" />,
   <AccountCircleIcon key="account" />,
 ];
-const BIcon = [ 
+const BIcon = [
+  <CollectionsIcon key="albums" />,
   <SettingsIcon key="settings" />,
   <ForumIcon key="thread"/>
 ];
@@ -103,7 +105,7 @@ function SideNavBar() {
         const response = await axios.get(`${process.env.REACT_APP_SERVER}/notifications/${storedUser._id}`);
         setNotifications(response.data);
         setUnreadCount(response.data.filter(n => !n.isRead).length);
-        setPendingRequestCount(response.data.filter(n => n.type === 'follow_request').length);
+        setPendingRequestCount(response.data.filter(n => n.type === 'follow_request' || n.type === 'album_invite').length);
     } catch(error) {}
   };
 
@@ -182,6 +184,23 @@ function SideNavBar() {
     }
   };
 
+  const handleAlbumInvite = async (notif, action) => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (!storedUser || !notif?.link) return;
+    const albumId = notif.link.split('/').filter(Boolean).pop();
+    if (!albumId) return;
+    try {
+      await axios.put(`${process.env.REACT_APP_SERVER}/albums/${albumId}/invite/respond`, {
+        userId: storedUser._id,
+        action
+      });
+      await axios.delete(`${process.env.REACT_APP_SERVER}/notifications/${notif._id}`);
+      fetchNotifs();
+    } catch (error) {
+      console.error('Failed to handle album invite', error);
+    }
+  };
+
   const clearSingleNotification = async (notifId) => {
     try {
       await axios.delete(`${process.env.REACT_APP_SERVER}/notifications/${notifId}`);
@@ -254,7 +273,12 @@ function SideNavBar() {
       ))}
         </div><div className='sideL'>
         {BIcon.map((icon, index) => (
-          <Item key={index} icon={icon} name={index === 0 ? 'Settings' : 'Threads'} link={index === 0 ? 'settings' : 'message'}>
+          <Item
+            key={index}
+            icon={icon}
+            name={index === 0 ? 'Albums' : index === 1 ? 'Settings' : 'Threads'}
+            link={index === 0 ? 'albums' : index === 1 ? 'settings' : 'message'}
+          >
             {icon}
           </Item>  
         ))}
@@ -303,6 +327,8 @@ function SideNavBar() {
                         ? `New message from ${notif.sender?.username}`
                         : notif.type === 'follow_request'
                         ? `${notif.sender?.username} sent follow request`
+                        : notif.type === 'album_invite'
+                        ? `${notif.sender?.username} invited you to an album`
                         : `New follower: ${notif.sender?.username}`
                     }
                     content={notif.content}
@@ -319,6 +345,12 @@ function SideNavBar() {
                     <div className='follow-request-actions'>
                       <button className='notif-action-btn accept' onClick={() => handleFollowRequest(notif, 'accept')}>Accept</button>
                       <button className='notif-action-btn reject' onClick={() => handleFollowRequest(notif, 'reject')}>Reject</button>
+                    </div>
+                  )}
+                  {notif.type === 'album_invite' && (
+                    <div className='follow-request-actions'>
+                      <button className='notif-action-btn accept' onClick={() => handleAlbumInvite(notif, 'accept')}>Join Album</button>
+                      <button className='notif-action-btn reject' onClick={() => handleAlbumInvite(notif, 'reject')}>Reject</button>
                     </div>
                   )}
                 </div>

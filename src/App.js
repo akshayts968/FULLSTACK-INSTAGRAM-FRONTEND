@@ -12,6 +12,7 @@ import ExplorePage from './pages/ExplorePage';
 import ReelsPage from './pages/ReelsPage';
 import SettingsPage from './pages/SettingsPage';
 import CreatePage from './pages/CreatePage';
+import AlbumsPage from './pages/AlbumsPage';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/reels" element={<ReelsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/create" element={<CreatePage />} />
+          <Route path="/albums" element={<AlbumsPage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/passUpdate" element={<PasswordUpdate />} />
           <Route path="/profile/:username" element={<Profile />} />

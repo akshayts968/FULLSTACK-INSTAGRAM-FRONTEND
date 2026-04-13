@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './Signup.css';
+import { saveCurrentAccount } from '../utils/accountStorage';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const SignUpForm = () => {
       });
 
       const user = response.data;
-      localStorage.setItem('user', JSON.stringify(user));
+      saveCurrentAccount(user);
       navigate("/profile");
     } catch (error) {
       console.error(error);

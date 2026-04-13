@@ -1,0 +1,115 @@
+.albums-page {
+  margin-left: 245px;
+  padding: 24px;
+  color: #fff;
+  min-height: 100vh;
+  background: #000;
+}
+
+.albums-create,
+.albums-list,
+.albums-viewer {
+  border: 1px solid #262626;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: #111;
+}
+
+.albums-create input,
+.albums-viewer input {
+  width: 100%;
+  margin-bottom: 10px;
+  background: #1a1a1a;
+  color: #fff;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.albums-create button,
+.albums-viewer button,
+.album-card {
+  background: #0095f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.albums-members {
+  max-height: 190px;
+  overflow-y: auto;
+  border: 1px solid #262626;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.albums-members label,
+.albums-checkbox {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.member-option {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid #2f2f2f;
+  border-radius: 8px;
+  margin-bottom: 0 !important;
+}
+
+.member-option input {
+  width: auto !important;
+  margin-bottom: 0 !important;
+}
+
+.album-card {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 8px;
+  background: #1a1a1a;
+}
+
+.capsule-note {
+  color: #f7b500;
+  font-size: 14px;
+}
+
+.upload-hint {
+  display: block;
+  color: #b3b3b3;
+  margin: -4px 0 10px;
+}
+
+.albums-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.albums-photo img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.albums-photo.blurred img {
+  filter: blur(12px);
+}
+
+@media (max-width: 768px) {
+  .albums-page {
+    margin-left: 0;
+    padding: 14px 12px 90px;
+  }
+}

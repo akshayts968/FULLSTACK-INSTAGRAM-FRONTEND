@@ -2,11 +2,11 @@
     display: flex;
     flex-grow: 1;
     background-color: violet;
-    overflow: scroll;
+    overflow: auto;
     scrollbar-width: none;
 }
 .Profile{
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     background: #000;
     position: fixed;

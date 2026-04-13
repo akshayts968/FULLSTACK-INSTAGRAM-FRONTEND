@@ -247,6 +247,15 @@ const SubMain = (props) => {
     }
   };
 
+  const handleCommentKeyDown = (e) => {
+    if (e.key !== 'Enter') return;
+    if (e.shiftKey) return;
+    e.preventDefault();
+    if (newComment.trim()) {
+      handleCommentAdd();
+    }
+  };
+
   const handleInputChange = (event) => {
     const newValue = event.target.value;
     setNewComment(newValue);
@@ -399,7 +408,7 @@ const SubMain = (props) => {
           </div>
           <div className="cs-comment">
             <div className="add-comments">
-              <textarea onChange={handleInputChange} value={newComment} name="comment" id="comment" cols="30" rows="auto" placeholder="Add comments..."></textarea>
+              <textarea onChange={handleInputChange} onKeyDown={handleCommentKeyDown} value={newComment} name="comment" id="comment" cols="30" rows="auto" placeholder="Add comments..."></textarea>
               <a className="ml-1" onClick={handleCommentAdd}>Post</a>
             </div>
           </div>

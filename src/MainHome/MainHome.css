@@ -1,7 +1,8 @@
 .MainHome {
     margin: 0 auto;
     overflow-y: auto;
-    height: 100vh;
+    height: 100%;
+    min-height: 0;
     scrollbar-width: none;
     -ms-overflow-style: none;
     background-color: #000;
@@ -168,7 +169,7 @@
 @media (max-width: 766px) {
     .MainHome {
         width: 100%;
-        height: calc(100vh - 116px);
+        height: calc(100% - 116px);
         padding: 10px 10px 0;
         box-sizing: border-box;
         align-items: stretch;

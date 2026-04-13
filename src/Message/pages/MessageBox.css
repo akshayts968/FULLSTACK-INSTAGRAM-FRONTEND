@@ -37,8 +37,17 @@
         outline: none;
     }
 }
-.INPUT input{
+.INPUT input,
+.INPUT textarea.Iinput{
     width: 100%;
+}
+.INPUT textarea.Iinput {
+    resize: none;
+    min-height: 20px;
+    max-height: 120px;
+    line-height: 1.35;
+    font-family: inherit;
+    font-size: 14px;
 }
 .MSGSend{
     width: 31.675px;

@@ -213,6 +213,12 @@ function Message() {
     node.scrollTop = node.scrollHeight;
   }, [Rid]);
 
+  useEffect(() => {
+    const node = msgMainRef.current;
+    if (!node) return;
+    node.scrollTop = node.scrollHeight;
+  }, [MessageList.length]);
+
   const loadOlderMessages = async () => {
     if (!Rid || !id || !hasMoreMessages || loadingMoreMessages) return;
     const node = msgMainRef.current;
