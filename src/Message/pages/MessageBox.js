@@ -15,6 +15,7 @@ function MessageBox(props) {
     const [toggleBtn, setToggleBtn] = useState(false);
     const [showEmoji, setShowEmoji] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
+    const [sendError, setSendError] = useState('');
 
     const storedUser = JSON.parse(localStorage.getItem('user'));
     const fileInputRef = useRef(null);
@@ -85,6 +86,7 @@ function MessageBox(props) {
 
     const handleSubmit = async () => {
         setShowEmoji(false);
+        setSendError('');
         let uploadedMediaUrls = [];
 
         if (mediaFiles.length > 0) {
@@ -107,6 +109,14 @@ function MessageBox(props) {
         }
 
         try {
+            if (
+              props.requestStatus?.status === 'pending' &&
+              String(props.requestStatus?.requester) === String(props.currentUserId)
+            ) {
+              setSendError('Message request pending. Wait until they accept.');
+              return;
+            }
+
             const payload = {
                 content: message,
                 media: uploadedMediaUrls
@@ -127,6 +137,9 @@ function MessageBox(props) {
             setToggleBtn(false);
         } catch (error) {
             console.error('Error sending message:', error);
+            if (error?.response?.data?.code === 'MESSAGE_REQUEST_LIMIT') {
+                setSendError(error.response.data.message || 'Message request pending. Wait for acceptance.');
+            }
         }
     };
 
@@ -201,6 +214,11 @@ function MessageBox(props) {
                     onChange={handleFileChange}
                 />
             </div>
+            {sendError && (
+              <div style={{ color: '#ed4956', fontSize: 12, marginTop: 6, alignSelf: 'flex-start', marginLeft: 16 }}>
+                {sendError}
+              </div>
+            )}
         </div>
     );
 }

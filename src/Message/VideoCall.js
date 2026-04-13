@@ -175,6 +175,16 @@ const VideoCall = ({ socket, receiverId, callerId, type, isReceiving, incomingSi
         onEndCall();
     };
 
+    const AudioWave = () => (
+        <div className="audio-wave">
+            <span className="wave-bar"></span>
+            <span className="wave-bar"></span>
+            <span className="wave-bar"></span>
+            <span className="wave-bar"></span>
+            <span className="wave-bar"></span>
+        </div>
+    );
+
     return (
         <div className="VideoCallOverlay">
             <div className="VideoCallContainer">
@@ -185,8 +195,9 @@ const VideoCall = ({ socket, receiverId, callerId, type, isReceiving, incomingSi
                         {effectiveType === 'video' ? (
                             <video playsInline muted ref={myVideo} autoPlay />
                         ) : (
-                            <div style={{ color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                                Audio only
+                            <div className="audio-only-box">
+                                <div>Audio only</div>
+                                <AudioWave />
                             </div>
                         )}
                     </div>
@@ -195,8 +206,9 @@ const VideoCall = ({ socket, receiverId, callerId, type, isReceiving, incomingSi
                             {effectiveType === 'video' ? (
                                 <video playsInline ref={userVideo} autoPlay />
                             ) : (
-                                <div style={{ color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                                    Connected audio call
+                                <div className="audio-only-box">
+                                    <div>Connected audio call</div>
+                                    <AudioWave />
                                 </div>
                             )}
                         </div>

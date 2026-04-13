@@ -85,6 +85,7 @@ function Message() {
   const [MsgView, setMsgView] = useState(false);
   const [room, setRoom] = useState("");
   const [Rid, setRid] = useState(null);
+  const [messageRequestStatus, setMessageRequestStatus] = useState(null);
   const [msgOffset, setMsgOffset] = useState(0);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
@@ -197,6 +198,7 @@ function Message() {
           SetMessageList(data.messages || []);
           setMsgOffset((data.messages || []).length);
           setHasMoreMessages(Boolean(data.hasMore));
+          setMessageRequestStatus(data.requestStatus || null);
         } catch (error) {
           console.error('Error in fetchMessageData:', error);
         }
@@ -224,6 +226,7 @@ function Message() {
         setMsgOffset((prev) => prev + older.length);
       }
       setHasMoreMessages(Boolean(data.hasMore));
+      if (data.requestStatus) setMessageRequestStatus(data.requestStatus);
       requestAnimationFrame(() => {
         if (node) {
           const nextHeight = node.scrollHeight;
@@ -234,6 +237,19 @@ function Message() {
       console.error('Error loading older messages', error);
     } finally {
       setLoadingMoreMessages(false);
+    }
+  };
+
+  const respondToMessageRequest = async (action) => {
+    if (!messageRequestStatus?._id) return;
+    try {
+      const res = await axios.put(`${process.env.REACT_APP_SERVER}/messages/request/${messageRequestStatus._id}`, {
+        userId: id,
+        action
+      });
+      setMessageRequestStatus(res.data.requestStatus);
+    } catch (error) {
+      console.error('Failed to respond request', error);
     }
   };
 
@@ -318,7 +334,20 @@ function Message() {
             </div>
           ))}
         </div>
-        <MessageBox RID={Receiver._id} socket={socket} room={room} contentSave={contentSave}></MessageBox>
+        {messageRequestStatus?.status === 'pending' && String(messageRequestStatus.recipient) === String(id) && (
+          <div style={{ display: 'flex', gap: 8, padding: '0 16px 12px' }}>
+            <button onClick={() => respondToMessageRequest('accept')}>Accept Request</button>
+            <button onClick={() => respondToMessageRequest('reject')}>Reject Request</button>
+          </div>
+        )}
+        <MessageBox
+          RID={Receiver._id}
+          socket={socket}
+          room={room}
+          contentSave={contentSave}
+          requestStatus={messageRequestStatus}
+          currentUserId={id}
+        ></MessageBox>
       </div>}
 
       {MsgView && showDetails && (
