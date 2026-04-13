@@ -1,0 +1,119 @@
+.explore-page-content {
+  height: 100vh;
+  overflow-y: auto;
+  width: 100%;
+  padding: 20px 24px 90px;
+  box-sizing: border-box;
+}
+
+.explore-title {
+  color: #fff;
+  margin: 0 0 16px;
+}
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 8px;
+  width: 100%;
+  max-width: 940px;
+}
+
+.explore-card {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #111;
+  cursor: pointer;
+}
+
+.explore-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.explore-card:hover .explore-image {
+  transform: scale(1.03);
+}
+
+.explore-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.explore-modal-card {
+  width: min(920px, 95vw);
+  max-height: 90vh;
+  background: #0f0f0f;
+  border: 1px solid #262626;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.explore-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 2;
+  border: none;
+  border-radius: 999px;
+  width: 30px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+}
+
+.explore-modal-media-wrap {
+  width: 100%;
+  background: #000;
+  max-height: 70vh;
+}
+
+.explore-modal-media {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  background: #000;
+}
+
+.explore-modal-info {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+}
+
+.explore-owner-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.explore-owner-name {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.explore-owner-desc {
+  color: #d7d7d7;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.explore-owner-meta {
+  color: #9c9c9c;
+  font-size: 12px;
+}

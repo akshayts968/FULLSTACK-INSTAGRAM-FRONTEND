@@ -96,6 +96,10 @@ function Message() {
   const [MsgView, setMsgView] = useState(false);
   const [room, setRoom] = useState("");
   const [Rid, setRid] = useState(null);
+  const [msgOffset, setMsgOffset] = useState(0);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+  const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
+  const msgMainRef = useRef(null);
   const storedUser = JSON.parse(localStorage.getItem('user'));
   const id = storedUser._id;
 
@@ -165,6 +169,7 @@ function Message() {
       status: message.status || 'sent'
     };
     SetMessageList((prevMessages) => [...prevMessages, newMsg]);
+    setMsgOffset((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -190,6 +195,8 @@ function Message() {
 
   useEffect(() => {
     if (Rid && id) {
+      setMsgOffset(0);
+      setHasMoreMessages(true);
       const currentRoom = [id, Rid].sort().join('-');
       setRoom(currentRoom);
       socket.emit('joinRoom', currentRoom);
@@ -197,8 +204,10 @@ function Message() {
 
       const fetchMessageData = async () => {
         try {
-          const data = await fetchData(id, Rid);
-          SetMessageList(data);
+          const data = await fetchData(id, Rid, 0, 5);
+          SetMessageList(data.messages || []);
+          setMsgOffset((data.messages || []).length);
+          setHasMoreMessages(Boolean(data.hasMore));
         } catch (error) {
           console.error('Error in fetchMessageData:', error);
         }
@@ -206,6 +215,55 @@ function Message() {
       fetchMessageData();
     }
   }, [Rid, id]);
+
+  useEffect(() => {
+    const node = msgMainRef.current;
+    if (!node) return;
+    node.scrollTop = node.scrollHeight;
+  }, [Rid]);
+
+  const loadOlderMessages = async () => {
+    if (!Rid || !id || !hasMoreMessages || loadingMoreMessages) return;
+    const node = msgMainRef.current;
+    const prevHeight = node ? node.scrollHeight : 0;
+    setLoadingMoreMessages(true);
+    try {
+      const data = await fetchData(id, Rid, msgOffset, 10);
+      const older = data.messages || [];
+      if (older.length) {
+        SetMessageList((prev) => [...older, ...prev]);
+        setMsgOffset((prev) => prev + older.length);
+      }
+      setHasMoreMessages(Boolean(data.hasMore));
+      requestAnimationFrame(() => {
+        if (node) {
+          const nextHeight = node.scrollHeight;
+          node.scrollTop = nextHeight - prevHeight;
+        }
+      });
+    } catch (error) {
+      console.error('Error loading older messages', error);
+    } finally {
+      setLoadingMoreMessages(false);
+    }
+  };
+
+  const formatDateLabel = (ts) => {
+    const date = new Date(ts);
+    const now = new Date();
+    const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startMsg = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const diffDays = Math.floor((startToday - startMsg) / (24 * 60 * 60 * 1000));
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    return date.toLocaleDateString();
+  };
+
+  const sameDay = (a, b) => {
+    const da = new Date(a);
+    const db = new Date(b);
+    return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() && da.getDate() === db.getDate();
+  };
 
   const [ChatList, setChatList] = useState("");
   useEffect(() => {
@@ -253,10 +311,22 @@ function Message() {
             setCallActive(true);
           }}
         />
-        <div className='msgMain'>
+        <div
+          className='msgMain'
+          ref={msgMainRef}
+          onScroll={(e) => {
+            if (e.currentTarget.scrollTop <= 20) loadOlderMessages();
+          }}
+        >
           <ProfileMSg key={Receiver._id} id={Receiver._id} name={Receiver._id === id ? `${Receiver.name || Receiver.username} (Me)` : (Receiver.name || Receiver.username)} profile={Receiver.profile} ></ProfileMSg>
+          {loadingMoreMessages && <div className='msg-load-indicator'>Loading older messages...</div>}
           {MessageList && MessageList.map((msg, index) => (
-            <SingleMsg key={index} message={msg} id={msg._id} userid={Receiver._id} sender={msg.sender} profile={Receiver.profile} receiver={msg.receiver} content={msg.content} />
+            <div key={index}>
+              {(index === 0 || !sameDay(MessageList[index - 1]?.timestamp, msg.timestamp)) && (
+                <div className='msg-date-separator'>{formatDateLabel(msg.timestamp)}</div>
+              )}
+              <SingleMsg message={msg} id={msg._id} userid={Receiver._id} sender={msg.sender} profile={Receiver.profile} receiver={msg.receiver} content={msg.content} />
+            </div>
           ))}
         </div>
         <MessageBox RID={Receiver._id} socket={socket} room={room} contentSave={contentSave}></MessageBox>

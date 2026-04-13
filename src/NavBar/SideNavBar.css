@@ -143,6 +143,38 @@
     color: #fff;
 }
 
+.follow-request-actions {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 14px 80px;
+}
+
+.notif-action-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.notif-action-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+.notif-action-btn.accept {
+    background: #0095f6;
+    color: #fff;
+}
+
+.notif-action-btn.reject {
+    background: #2a2a2a;
+    color: #f5f5f5;
+    border: 1px solid #3a3a3a;
+}
+
 @media screen and (min-width:1264px) {
     .SideNavBar{
         width: 220px;

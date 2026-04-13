@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './HighlightViewer.css';
+import axios from 'axios';
 
-function HighlightViewer({ highlightGroup, onClose }) {
+function HighlightViewer({ highlightGroup, onClose, ownerId, canManage, onHighlightUpdated }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const medias = highlightGroup.medias || [];
 
   useEffect(() => {
@@ -35,6 +37,23 @@ function HighlightViewer({ highlightGroup, onClose }) {
     }
   };
 
+  const handleDeleteCurrent = async () => {
+    if (!canManage || !ownerId) return;
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_SERVER}/user/${ownerId}/highlight/${encodeURIComponent(highlightGroup.name)}/media/${currentIndex}`
+      );
+      if (onHighlightUpdated) onHighlightUpdated(response.data.user, highlightGroup.name);
+      const nextLength = (response.data.user?.highlight || []).find((h) => h.name === highlightGroup.name)?.medias?.length || 0;
+      if (nextLength === 0) onClose();
+      else setCurrentIndex((prev) => Math.max(0, Math.min(prev, nextLength - 1)));
+    } catch (error) {
+      console.error('Failed to delete highlight media', error);
+    } finally {
+      setShowDeleteConfirm(false);
+    }
+  };
+
   if (medias.length === 0) return null;
 
   return (
@@ -56,6 +75,11 @@ function HighlightViewer({ highlightGroup, onClose }) {
 
       <div className="highlight-title">{highlightGroup.name}</div>
       <button className="highlight-close-btn" onClick={onClose}>&times;</button>
+      {canManage && (
+        <button className="highlight-delete-media-btn" onClick={() => setShowDeleteConfirm(true)}>
+          Delete This
+        </button>
+      )}
 
       <div className="highlight-media-container">
         
@@ -64,6 +88,19 @@ function HighlightViewer({ highlightGroup, onClose }) {
 
         <img src={medias[currentIndex]} className="highlight-media-img" alt="Highlight Slide" />
       </div>
+
+      {showDeleteConfirm && (
+        <div className="highlight-confirm-overlay" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="highlight-confirm-box" onClick={(e) => e.stopPropagation()}>
+            <div className="highlight-confirm-title">Delete this highlight item?</div>
+            <div className="highlight-confirm-subtitle">This action cannot be undone.</div>
+            <div className="highlight-confirm-actions">
+              <button className="highlight-confirm-btn cancel" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
+              <button className="highlight-confirm-btn delete" onClick={handleDeleteCurrent}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

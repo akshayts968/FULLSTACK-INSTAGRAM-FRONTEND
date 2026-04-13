@@ -6,6 +6,7 @@ import Edit from '../../Add/Edit';
 import PostADD from '../../Add/Padd';
 import HighlightUploadModal from './HighlightUploadModal';
 import HighlightViewer from './HighlightViewer';
+import FollowListModal from './FollowListModal';
 
 function Post({ post, img, postView }) {
   const handleClick = () => {
@@ -38,6 +39,9 @@ function MainProfile(props) {
 
   const [showHighlightModal, setShowHighlightModal] = useState(false);
   const [activeViewerGroup, setActiveViewerGroup] = useState(null);
+  const [isPrivateLocked, setIsPrivateLocked] = useState(false);
+  const [isRequested, setIsRequested] = useState(false);
+  const [followModalType, setFollowModalType] = useState(null);
 
   const toggleEdit = () => {
     setEdit(!edit);
@@ -56,11 +60,12 @@ function MainProfile(props) {
     const fetchPosts = async () => {
       try {
         const response = username
-          ? await axios.get(`${process.env.REACT_APP_SERVER}/post/user/${username}`)
-          : await axios.get(`${process.env.REACT_APP_SERVER}/post/user/${User.username}`);
+          ? await axios.get(`${process.env.REACT_APP_SERVER}/post/user/${username}?viewerId=${User._id}`)
+          : await axios.get(`${process.env.REACT_APP_SERVER}/post/user/${User.username}?viewerId=${User._id}`);
 
         setPosts(response.data.data);
         setProfileData(response.data.User);
+        setIsPrivateLocked(Boolean(response.data.isPrivateLocked));
         setNFollowers(response.data.User.nFollowers);
         setNFollowing(response.data.User.nFollowing);
 
@@ -72,6 +77,12 @@ function MainProfile(props) {
           } else {
             setFollow("Follow");
           }
+        }
+        if (response.data.User?.pendingFollowRequests?.includes(storedUser?._id)) {
+          setIsRequested(true);
+          setFollow("Requested");
+        } else {
+          setIsRequested(false);
         }
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -85,13 +96,37 @@ function MainProfile(props) {
     const response = await axios.put(`${process.env.REACT_APP_SERVER}/user/${profileData._id}/${User._id}`);
     localStorage.setItem('user', JSON.stringify(response.data.user));
     setUser(response.data.user);
-    // If follow ADD toggles, we can quickly toggle the visual state
-    setFollow(prev => prev === "Follow" ? "Following" : "Follow");
+    if (response.data.isRequested) {
+      setFollow("Requested");
+      setIsRequested(true);
+    } else {
+      setFollow(prev => prev === "Follow" ? "Following" : "Follow");
+      setIsRequested(false);
+    }
     setNFollowers(response.data.coMan.nFollowers);
   }
 
   const handleHighlightSuccess = (updatedUser) => {
     setProfileData(updatedUser);
+  };
+
+  const handleHighlightUpdated = (updatedUser, groupName) => {
+    setProfileData(updatedUser);
+    const updatedGroup = (updatedUser.highlight || []).find((h) => h.name === groupName);
+    if (!updatedGroup) {
+      setActiveViewerGroup(null);
+    } else {
+      setActiveViewerGroup(updatedGroup);
+    }
+  };
+
+  const removeHighlight = async (groupName) => {
+    try {
+      const response = await axios.delete(`${process.env.REACT_APP_SERVER}/user/${User._id}/highlight/${encodeURIComponent(groupName)}`);
+      setProfileData(response.data.user);
+    } catch (error) {
+      console.error('Failed to delete highlight', error);
+    }
   };
 
   // Handle Logout
@@ -112,7 +147,15 @@ function MainProfile(props) {
       {edit && <Edit onClose={toggleEdit} />}
       {addPost && <PostADD onClose={toggleAddPost} />}
       {showHighlightModal && <HighlightUploadModal onClose={() => setShowHighlightModal(false)} onSuccess={handleHighlightSuccess} user={profileData} />}
-      {activeViewerGroup && <HighlightViewer highlightGroup={activeViewerGroup} onClose={() => setActiveViewerGroup(null)} />}
+      {activeViewerGroup && (
+        <HighlightViewer
+          highlightGroup={activeViewerGroup}
+          onClose={() => setActiveViewerGroup(null)}
+          ownerId={profileData._id}
+          canManage={!username || username === User.username}
+          onHighlightUpdated={handleHighlightUpdated}
+        />
+      )}
 
       <div className='profile-header-container'>
         <div className='profile-avatar-container'>
@@ -127,7 +170,7 @@ function MainProfile(props) {
             <h2 className='profile-username'>{profileData.username || 'username'}</h2>
             {username && username !== User.username ? (
               <>
-                <button className={`profile-btn ${follow === 'Follow' ? 'primary' : ''}`} onClick={followADD}>
+                <button className={`profile-btn ${follow === 'Follow' ? 'primary' : ''}`} onClick={followADD} disabled={isRequested}>
                   {follow}
                 </button>
                 <button className='profile-btn'>Message</button>
@@ -143,8 +186,8 @@ function MainProfile(props) {
 
           <div className='profile-stats'>
             <div><span>{posts.length || '0'}</span> posts</div>
-            <div><span>{nFollowers || '0'}</span> followers</div>
-            <div><span>{nFollowing || '0'}</span> following</div>
+            <div style={{ cursor: 'pointer' }} onClick={() => setFollowModalType('followers')}><span>{nFollowers || '0'}</span> followers</div>
+            <div style={{ cursor: 'pointer' }} onClick={() => setFollowModalType('followings')}><span>{nFollowing || '0'}</span> following</div>
           </div>
 
           <div className='profile-bio'>
@@ -169,6 +212,18 @@ function MainProfile(props) {
             <div className='highlight-item' key={index} onClick={() => setActiveViewerGroup(hlGroup)}>
               <div className='highlight-bubble' style={{ backgroundImage: `url(${hlGroup.cover})` }}></div>
               <span className='highlight-text'>{hlGroup.name}</span>
+              {(!username || username === User.username) && (
+                <button
+                  type="button"
+                  className='highlight-remove-btn'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeHighlight(hlGroup.name);
+                  }}
+                >
+                  Remove
+                </button>
+              )}
             </div>
           ) : null
         ))}
@@ -187,7 +242,12 @@ function MainProfile(props) {
       </div>
 
       <div className='Posts'>
-        {displayPosts.map((post) => {
+        {isPrivateLocked ? (
+          <div style={{ color: '#a8a8a8', padding: '30px 0',flexGrow: 1,width: '100vw',justifyContent: 'center',alignItems: 'center',textAlign: 'center',gridColumn: '1 / -1',     // Spans all columns (Use camelCase in JSX)
+            width: '100%' }}>
+            This account is private. Follow to view posts, reels, and tagged content.
+          </div>
+        ) : displayPosts.map((post) => {
           // 1. Check if the URL string ends with a common video extension
           const isVideo = post.videourl && post.videourl.match(/\.(mp4|mov|webm|mkv)$/i);
 
@@ -205,6 +265,13 @@ function MainProfile(props) {
           );
         })}
       </div>
+      {followModalType && (
+        <FollowListModal
+          userId={profileData._id}
+          type={followModalType}
+          onClose={() => setFollowModalType(null)}
+        />
+      )}
     </div>
   );
 }

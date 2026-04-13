@@ -9,6 +9,7 @@ function Edit({ onClose }) {
     name: User.name || '',
     email: User.email || '',
     field: User.field || '',
+    isPrivate: Boolean(User.isPrivate),
     profile: null,
   });
   const [preview, setPreview] = useState(User.profile || null);
@@ -45,6 +46,7 @@ function Edit({ onClose }) {
     formPayload.append("name", formData.name);
     formPayload.append("email", formData.email);
     formPayload.append("field", formData.field);
+    formPayload.append("isPrivate", formData.isPrivate);
     if (formData.profile) {
       formPayload.append("profile", formData.profile);
     }
@@ -96,6 +98,18 @@ function Edit({ onClose }) {
           <div className="edit-input-group">
             <label>Bio</label>
             <textarea className="edit-input" name="field" value={formData.field} onChange={handleChange} placeholder="Welcome to my profile..."></textarea>
+          </div>
+
+          <div className="edit-input-group">
+            <label>
+              <input
+                type="checkbox"
+                name="isPrivate"
+                checked={formData.isPrivate}
+                onChange={(e) => setFormData({ ...formData, isPrivate: e.target.checked })}
+              />
+              {' '}Private account (only followers can view posts, reels, tagged)
+            </label>
           </div>
 
           <button type="submit" className="edit-save-btn" disabled={loading}>

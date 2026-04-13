@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Main.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faBookmark, faPaperPlane, faFaceSmile } from '@fortawesome/free-regular-svg-icons';
@@ -8,16 +9,25 @@ import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 import io from 'socket.io-client';
 import EmojiPicker from 'emoji-picker-react';
 import Dot3 from '../Profile/Dot3';
+import { fetchProfileByIdCached, setCachedProfile } from '../utils/profileCache';
 const socket = io(`${process.env.REACT_APP_SERVER}`);
 
 const Main = ({ post, onClick, toggle }) => {
+  const navigate = useNavigate();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [comment, setComment] = useState('');
   const [date, setDate] = useState("");
+  const [profileMenuData, setProfileMenuData] = useState(null);
+  const [storyPreview, setStoryPreview] = useState(null);
+
+  const fallbackImage =
+    process.env.REACT_APP_FALLBACK_IMAGE ||
+    process.env.REACT_APP_CLOUDINARY_URL ||
+    'https://i.pinimg.com/originals/44/bf/66/44bf66ebb891eef4f48b8492f001c938.jpg';
 
   // --- NEW: Check for video and set the display image ---
   const isVideo = post.videourl && post.videourl.match(/\.(mp4|mov|webm|mkv)$/i);
-  const displayImg = isVideo && post.thumbnailUrl ? post.thumbnailUrl : post.videourl;
+  const displayImg = (isVideo && post.thumbnailUrl ? post.thumbnailUrl : post.videourl) || fallbackImage;
   // ------------------------------------------------------
 
   useEffect(() => {
@@ -125,14 +135,58 @@ const Main = ({ post, onClick, toggle }) => {
     toggle();
   };
 
+  const resolveOwnerProfile = async () => {
+    const owner = post.postOwner;
+    if (owner?._id && owner?.username) {
+      setCachedProfile(owner);
+      return owner;
+    }
+    if (typeof owner === 'string') {
+      return await fetchProfileByIdCached(owner);
+    }
+    return owner;
+  };
+
+  const handleProfileImageClick = async () => {
+    try {
+      const owner = await resolveOwnerProfile();
+      if (owner) setProfileMenuData(owner);
+    } catch (error) {
+      console.error('Failed to load profile actions', error);
+    }
+  };
+
+  const openStoryPreview = () => {
+    if (!profileMenuData) return;
+    const stories = profileMenuData.stories || [];
+    if (stories.length) {
+      setStoryPreview(typeof stories[0] === 'string' ? { mediaUrl: stories[0], mediaType: 'image' } : stories[0]);
+      return;
+    }
+    if (profileMenuData.story) {
+      setStoryPreview({ mediaUrl: profileMenuData.story, mediaType: 'image' });
+    }
+  };
+  const isStoryVideo = Boolean(storyPreview?.mediaType === 'video' || (storyPreview?.mediaUrl || '').match(/\.(mp4|mov|webm|mkv)$/i));
+
   return (
     <div className="home-post">
       <div className="post-heading">
-        <span className="home-post-profile-pic">
-          <img src={post.postOwner.profile} alt="" />
+        <span className="home-post-profile-pic" onClick={handleProfileImageClick}>
+          <img
+            src={post.postOwner.profile || fallbackImage}
+            alt=""
+            onClick={(e) => {
+              e.stopPropagation();
+              handleProfileImageClick();
+            }}
+            onError={(e) => {
+              e.currentTarget.src = fallbackImage;
+            }}
+          />
         </span>
         <span className="home-post-ownername">
-          <span className="ml-3" style={{ color: '#f5f5f5' }}>{post.postOwner.username}</span>
+          <span className="ml-3" style={{ color: '#f5f5f5' }} onClick={handleProfileImageClick}>{post.postOwner.username}</span>
           <span style={{ color: '#f5f5f5' }}>4h</span>
         </span>
         <span className="float-right" onClick={handleToggle}>...</span>
@@ -140,7 +194,7 @@ const Main = ({ post, onClick, toggle }) => {
 
       {/* --- UPDATED: Using displayImg here --- */}
       <div className="hPost" onClick={onClick}>
-        <img src={displayImg} alt="Post media" />
+        <img src={displayImg} alt="Post media" onError={(e) => { e.currentTarget.src = fallbackImage; }} />
       </div>
       {/* -------------------------------------- */}
 
@@ -160,7 +214,15 @@ const Main = ({ post, onClick, toggle }) => {
         </div>
         <div className='post-description'>
           <span>
-            <img className='IMG-Des' src={post.postOwner.profile} alt="'Profile Image'" />
+            <img
+              className='IMG-Des'
+              src={post.postOwner.profile || fallbackImage}
+              alt="'Profile Image'"
+              onClick={handleProfileImageClick}
+              onError={(e) => {
+                e.currentTarget.src = fallbackImage;
+              }}
+            />
           </span>
           <div className='Description'>
             <span className='commentUsername'>{post.postOwner.username}</span>
@@ -193,6 +255,32 @@ const Main = ({ post, onClick, toggle }) => {
           )}
         </div>
       </div>
+
+      {profileMenuData && (
+        <div className="profile-action-overlay" onClick={() => setProfileMenuData(null)}>
+          <div className="profile-action-menu" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => navigate(`/profile/${profileMenuData.username}`)}>View Profile</button>
+            <button
+              onClick={openStoryPreview}
+              disabled={!((profileMenuData.stories && profileMenuData.stories.length) || profileMenuData.story)}
+            >
+              View Story
+            </button>
+          </div>
+        </div>
+      )}
+
+      {storyPreview && (
+        <div className="profile-action-overlay" onClick={() => setStoryPreview(null)}>
+          <div className="story-preview-modal" onClick={(e) => e.stopPropagation()}>
+            {isStoryVideo ? (
+              <video src={storyPreview.mediaUrl} controls autoPlay playsInline />
+            ) : (
+              <img src={storyPreview.mediaUrl || fallbackImage} alt="Story preview" onError={(e) => { e.currentTarget.src = fallbackImage; }} />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -79,6 +79,21 @@
     flex-grow: 1;
     overflow-x: hidden;
 }
+.msg-date-separator {
+    align-self: center;
+    color: #a8a8a8;
+    font-size: 12px;
+    margin: 12px 0 8px;
+    background: #1a1a1a;
+    border-radius: 999px;
+    padding: 4px 10px;
+}
+.msg-load-indicator {
+    align-self: center;
+    color: #8d8d8d;
+    font-size: 12px;
+    margin: 8px 0;
+}
 .viewPro{
     height: 32px;
     width: 75.725px;

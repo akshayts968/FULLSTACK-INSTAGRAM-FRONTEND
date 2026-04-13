@@ -9,6 +9,10 @@ import SignUpForm from './Signup/Signup';
 import PasswordUpdate from './PasswordUpdate';
 import VideoCall from './Message/VideoCall';
 import { SocketProvider } from './context/SocketContext';
+import ExplorePage from './pages/ExplorePage';
+import ReelsPage from './pages/ReelsPage';
+import SettingsPage from './pages/SettingsPage';
+import CreatePage from './pages/CreatePage';
 
 function App() {
   return (
@@ -22,6 +26,10 @@ function App() {
           <Route path="/home" element={<Main />} />
           <Route path="/message" element={<Message />} />
           <Route path="/message/:username" element={<Message />} />
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/reels" element={<ReelsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/create" element={<CreatePage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/passUpdate" element={<PasswordUpdate />} />
           <Route path="/profile/:username" element={<Profile />} />

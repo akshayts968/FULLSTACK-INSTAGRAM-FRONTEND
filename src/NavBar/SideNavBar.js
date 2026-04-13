@@ -10,7 +10,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SearchIcon from '@mui/icons-material/Search';
 import ChatIcon from '@mui/icons-material/Chat';
-import CreateIcon from '@mui/icons-material/Create';
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import ForumIcon from '@mui/icons-material/Forum';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -48,11 +48,11 @@ const iconNames = [
   'Home',
   'Search',
   'Explore',
-  'Movie Creation',
-  'Messager',
-  'Favorite',
+  'Reels',
+  'Messages',
+  'Notifications',
   'Create',
-  'Account',
+  'Profile',
 ];
 const link = [
   'home',
@@ -61,7 +61,7 @@ const link = [
   'reels',
   'message',
   '',
-  '',
+  'create',
   'profile'
 ]
 const icons = [
@@ -69,9 +69,9 @@ const icons = [
   <SearchIcon key="search" />,
   <ExploreIcon key="explore" />,
   <MovieCreationIcon key="movie_creation" />,
-  <ChatIcon key="Messager"/>,
-  <FavoriteIcon key="favorite" />,
-  <CreateIcon key="create" />,
+  <ChatIcon key="messages"/>,
+  <FavoriteIcon key="notifications" />,
+  <AddBoxOutlinedIcon key="create" />,
   <AccountCircleIcon key="account" />,
 ];
 const BIcon = [ 
@@ -80,6 +80,7 @@ const BIcon = [
 ];
 
 function SideNavBar() {
+  const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
   const [sValue,setSValue] = useState("");
   const [searchResult, setSearchResult] = useState(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -87,6 +88,7 @@ function SideNavBar() {
   
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [pendingRequestCount, setPendingRequestCount] = useState(0);
   const socket = useSocket();
 
   const [searchHistory, setSearchHistory] = useState(() => {
@@ -101,6 +103,7 @@ function SideNavBar() {
         const response = await axios.get(`${process.env.REACT_APP_SERVER}/notifications/${storedUser._id}`);
         setNotifications(response.data);
         setUnreadCount(response.data.filter(n => !n.isRead).length);
+        setPendingRequestCount(response.data.filter(n => n.type === 'follow_request').length);
     } catch(error) {}
   };
 
@@ -167,6 +170,38 @@ function SideNavBar() {
     setSValue(e.target.value)
   }
 
+  const handleFollowRequest = async (notif, action) => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (!storedUser || !notif?.sender?._id) return;
+    try {
+      await axios.put(`${process.env.REACT_APP_SERVER}/user/${storedUser._id}/request/${notif.sender._id}`, { action });
+      await axios.delete(`${process.env.REACT_APP_SERVER}/notifications/${notif._id}`);
+      fetchNotifs();
+    } catch (error) {
+      console.error('Failed to handle follow request', error);
+    }
+  };
+
+  const clearSingleNotification = async (notifId) => {
+    try {
+      await axios.delete(`${process.env.REACT_APP_SERVER}/notifications/${notifId}`);
+      setNotifications((prev) => prev.filter((n) => n._id !== notifId));
+    } catch (error) {
+      console.error('Failed to clear notification', error);
+    }
+  };
+
+  const clearAllNotifications = async () => {
+    try {
+      await Promise.all((notifications || []).map((n) => axios.delete(`${process.env.REACT_APP_SERVER}/notifications/${n._id}`)));
+      setNotifications([]);
+      setUnreadCount(0);
+      setPendingRequestCount(0);
+    } catch (error) {
+      console.error('Failed to clear all notifications', error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (sValue) {
@@ -189,23 +224,37 @@ function SideNavBar() {
         <div className='sideM'>
         <div className='iconDiv' >
         {icons.map((icon, index) => (
+      (() => {
+        const isProfileItem = iconNames[index] === 'Profile';
+        const renderedIcon = isProfileItem && storedUser?.profile ? (
+          <img
+            src={storedUser.profile}
+            alt="Profile"
+            style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', border: '1px solid #4a4a4a' }}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        ) : icon;
+        return (
        <Item 
           key={index} 
-          icon={icon} 
+          icon={renderedIcon} 
           name={iconNames[index]} 
           link={link[index]} 
           onClick={handleSearchClick} 
           isSearchActive={isSearchActive}
           onNotifClick={handleNotifClick}
           isNotifActive={isNotifActive}
-          badgeCount={iconNames[index] === 'Favorite' ? unreadCount : 0}
+          badgeCount={iconNames[index] === 'Notifications' ? pendingRequestCount : 0}
         >
-          {icon}
+          {renderedIcon}
         </Item>
+      )})()
       ))}
         </div><div className='sideL'>
         {BIcon.map((icon, index) => (
-          <Item key={index} icon={icon}>
+          <Item key={index} icon={icon} name={index === 0 ? 'Settings' : 'Threads'} link={index === 0 ? 'settings' : 'message'}>
             {icon}
           </Item>  
         ))}
@@ -238,21 +287,42 @@ function SideNavBar() {
         {isNotifActive && <div className='Search-Div' style={{zIndex: 100, borderLeft: '1px solid #262626'}}>
            <div className='Recent-Search-Head' style={{paddingTop: '20px'}}>
              <span className="title" style={{fontSize: '24px', fontWeight: 'bold'}}>Notifications</span>
+             {notifications.length > 0 && (
+               <button className="clear-btn" onClick={clearAllNotifications}>Clear All</button>
+             )}
            </div>
            <div className='Recent-Search' style={{marginTop: '10px'}}>
              {notifications.length > 0 ? (
-               notifications.map((notif) => (
-                 <SearchUser 
-                    key={notif._id} 
-                    id={notif.sender?._id} 
-                    img={notif.sender?.profile} 
-                    title={notif.type === 'message' ? `New message from ${notif.sender?.username}` : `New follower: ${notif.sender?.username}`} 
-                    content={notif.content} 
-                    username={notif.sender?.username} 
+              notifications.map((notif) => (
+                <div key={notif._id}>
+                  <SearchUser
+                    id={notif.sender?._id}
+                    img={notif.sender?.profile}
+                    title={
+                      notif.type === 'message'
+                        ? `New message from ${notif.sender?.username}`
+                        : notif.type === 'follow_request'
+                        ? `${notif.sender?.username} sent follow request`
+                        : `New follower: ${notif.sender?.username}`
+                    }
+                    content={notif.content}
+                    username={notif.sender?.username}
                     linkType={notif.type}
-                    setIsNotifActive={setIsNotifActive} 
-                 />
-               ))
+                    setIsNotifActive={setIsNotifActive}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '0 16px 8px' }}>
+                    <button className='notif-action-btn reject' onClick={() => clearSingleNotification(notif._id)}>
+                      Clear
+                    </button>
+                  </div>
+                  {notif.type === 'follow_request' && (
+                    <div className='follow-request-actions'>
+                      <button className='notif-action-btn accept' onClick={() => handleFollowRequest(notif, 'accept')}>Accept</button>
+                      <button className='notif-action-btn reject' onClick={() => handleFollowRequest(notif, 'reject')}>Reject</button>
+                    </div>
+                  )}
+                </div>
+              ))
              ) : (
                 <div style={{color:'#a8a8a8', textAlign:'center', marginTop:'20px'}}>No new notifications.</div>
              )}

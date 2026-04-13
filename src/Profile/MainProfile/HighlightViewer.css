@@ -50,6 +50,81 @@
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
+.highlight-delete-media-btn {
+  position: absolute;
+  top: 34px;
+  right: 76px;
+  z-index: 10002;
+  border: 1px solid rgba(237, 73, 86, 0.45);
+  background: rgba(237, 73, 86, 0.15);
+  color: #ffd0d4;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.highlight-delete-media-btn:hover {
+  background: rgba(237, 73, 86, 0.3);
+}
+
+.highlight-confirm-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10005;
+}
+
+.highlight-confirm-box {
+  width: 300px;
+  background: #111;
+  border: 1px solid #2c2c2c;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.highlight-confirm-title {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.highlight-confirm-subtitle {
+  color: #a8a8a8;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.highlight-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.highlight-confirm-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.highlight-confirm-btn.cancel {
+  background: #2a2a2a;
+  color: #f2f2f2;
+}
+
+.highlight-confirm-btn.delete {
+  background: #ed4956;
+  color: #fff;
+}
+
 .highlight-media-container {
   position: relative;
   width: 100%;

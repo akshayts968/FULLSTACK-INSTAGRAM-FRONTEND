@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-const fetchData = async (storedUserId, messageId) => {
+const fetchData = async (storedUserId, messageId, offset = 0, limit = 20) => {
   try {
-    const response = await axios.get(`${process.env.REACT_APP_SERVER}/Messages/${storedUserId}/${messageId}`);
+    const response = await axios.get(
+      `${process.env.REACT_APP_SERVER}/Messages/${storedUserId}/${messageId}?offset=${offset}&limit=${limit}`
+    );
     console.log(response);
     return response.data;
   } catch (error) {

@@ -9,6 +9,7 @@ import { faComment, faBookmark, faPaperPlane, faFaceSmile } from '@fortawesome/f
 import Dot3 from '../Profile/Dot3';
 import DeletePost from '../Add/DeletePost';
 import io from 'socket.io-client';
+import { fetchProfileByIdCached } from '../utils/profileCache';
 
 const socket = io(`${process.env.REACT_APP_SERVER}`);
 
@@ -147,11 +148,8 @@ const SubMain = (props) => {
           if (User._id === props.post.postOwner) {
             setCurrUser(User);
           } else {
-            const response = await axios.get(`${process.env.REACT_APP_SERVER}/user/${props.post.postOwner}`, {
-              timeout: 100000
-            });
-            console.log('comments are', response)
-            setCurrUser(response.data);
+            const profile = await fetchProfileByIdCached(props.post.postOwner);
+            setCurrUser(profile);
           }
         }
       } catch (error) {
