@@ -1,10 +1,6 @@
 import './Message.css';
 import SideNavBar from '../NavBar/SideNavBar';
 import TopProfile from '../Profile/TopProfile';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
-import MicIcon from '@mui/icons-material/Mic';
-import PhotoIcon from '@mui/icons-material/Photo';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -22,13 +18,6 @@ import VideoCall from './VideoCall';
 import './MessageInd.css';
 
 function MessageInd({ receiver, isMe, isOnline, onDetailsClick, onCallClick }) {
-  const [localStream, setLocalStream] = useState(null);
-  const [peerConnection, setPeerConnection] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
-  const socketRef = useRef(null);
-  const localVideoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
-
   return (
     <div className='MessageInd'>
       <div className='MessageIndTOP'>

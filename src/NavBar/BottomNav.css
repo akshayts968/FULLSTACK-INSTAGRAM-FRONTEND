@@ -1,10 +1,35 @@
 .BottomNav{
     width: 100vw;
-    height: 48px;
+    height: 56px;
     background-color: rgb(0, 0, 0);
     display: flex;
     justify-content: space-around;
+    align-items: center;
     color: white;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    border-top: 1px solid #262626;
+    z-index: 1200;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bottom-nav-item{
+    width: 20%;
+    text-decoration: none;
+    color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.bottom-nav-item svg{
+    font-size: 26px;
+}
+.bottom-nav-item img{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #555;
 }
 @media screen and (min-width:766px) {
     .BottomNav{

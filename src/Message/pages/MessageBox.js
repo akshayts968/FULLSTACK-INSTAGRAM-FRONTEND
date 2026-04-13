@@ -111,7 +111,7 @@ function MessageBox(props) {
                 content: message,
                 media: uploadedMediaUrls
             };
-            const response = await axios.post(`${process.env.REACT_APP_SERVER}/Messages/${storedUser._id}/${props.RID}`, payload);
+            const response = await axios.post(`${process.env.REACT_APP_SERVER}/messages/${storedUser._id}/${props.RID}`, payload);
             
             // Send socket real-time message payload inside current chat room
             props.socket.emit('sendMessage', { room: props.room, content: response.data });

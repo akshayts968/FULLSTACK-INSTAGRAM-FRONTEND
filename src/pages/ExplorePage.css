@@ -38,6 +38,21 @@
   transform: scale(1.03);
 }
 
+@media (max-width: 766px) {
+  .explore-page-content {
+    padding: 12px 10px 84px;
+  }
+
+  .explore-grid {
+    grid-template-columns: repeat(3, minmax(90px, 1fr));
+    gap: 4px;
+  }
+
+  .explore-title {
+    font-size: 20px;
+  }
+}
+
 .explore-modal-overlay {
   position: fixed;
   inset: 0;

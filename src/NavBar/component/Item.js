@@ -1,7 +1,4 @@
 import './Item.css';
-import HomeIcon from '@mui/icons-material/Home';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { Link } from 'react-router-dom';
 function Item(props) {
   function ClickHandler(e){

@@ -24,7 +24,7 @@ function PostADD({ onClose }) {
     if (searchQuery.length > 0) {
       const fetchUsers = async () => {
         try {
-          const res = await axios.get(`${process.env.REACT_APP_SERVER}/sresult?query=${searchQuery}`);
+          const res = await axios.get(`${process.env.REACT_APP_SERVER}/user/search/all?query=${searchQuery}`);
           setSearchResults(res.data);
         } catch (err) {
           console.error(err);

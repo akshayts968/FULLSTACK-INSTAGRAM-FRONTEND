@@ -17,10 +17,12 @@ function ExplorePage() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_SERVER}/post/all?viewerId=${user?._id || ''}`);
-        setPosts(res.data.posts || []);
+        const viewerId = user?._id || '';
+        const res = await axios.get(`${process.env.REACT_APP_SERVER}/post/all${viewerId ? `?viewerId=${viewerId}` : ''}`);
+        setPosts(Array.isArray(res.data.posts) ? res.data.posts : []);
       } catch (error) {
         console.error('Failed to load explore posts', error);
+        setPosts([]);
       }
     };
     fetchPosts();

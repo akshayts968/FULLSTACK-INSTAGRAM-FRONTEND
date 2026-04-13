@@ -7,7 +7,6 @@ import Message from './Message/Message';
 import Login from './Signup/Login';
 import SignUpForm from './Signup/Signup';
 import PasswordUpdate from './PasswordUpdate';
-import VideoCall from './Message/VideoCall';
 import { SocketProvider } from './context/SocketContext';
 import ExplorePage from './pages/ExplorePage';
 import ReelsPage from './pages/ReelsPage';

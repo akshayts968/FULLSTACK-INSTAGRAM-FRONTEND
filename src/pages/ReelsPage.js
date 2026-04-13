@@ -12,13 +12,15 @@ function ReelsPage() {
   useEffect(() => {
     const fetchReels = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_SERVER}/post/all?viewerId=${user?._id || ''}`);
+        const viewerId = user?._id || '';
+        const res = await axios.get(`${process.env.REACT_APP_SERVER}/post/all${viewerId ? `?viewerId=${viewerId}` : ''}`);
         const allPosts = res.data.posts || [];
-        const onlyReels = allPosts.filter((p) => p.isReel);
+        const onlyReels = allPosts.filter((p) => p.isReel || (p.videourl && p.videourl.match(/\.(mp4|mov|webm|mkv)$/i)));
         setReels(onlyReels);
         setCurrentIndex(0);
       } catch (error) {
         console.error('Failed to load reels', error);
+        setReels([]);
       }
     };
     fetchReels();
@@ -38,10 +40,10 @@ function ReelsPage() {
     <div className="Main">
       <TopNav />
       <SideNavBar />
-      <div className="MainHome" style={{ paddingTop: 12 }}>
+      <div className="MainHome" style={{ padding: '12px 12px 80px' }}>
         <h2 style={{ color: '#fff', marginBottom: 14 }}>Reels</h2>
         {currentReel ? (
-          <div style={{ width: '100%', maxWidth: 520, background: '#111', borderRadius: 10, padding: 8 }}>
+          <div style={{ width: '100%', maxWidth: 520, background: '#111', borderRadius: 10, padding: 8, boxSizing: 'border-box' }}>
             <video
               key={currentReel._id}
               src={currentReel.videourl}

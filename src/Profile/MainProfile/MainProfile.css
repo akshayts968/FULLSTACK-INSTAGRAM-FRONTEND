@@ -249,3 +249,54 @@
 .highlight-upload-input {
   display: none;
 }
+
+@media (max-width: 766px) {
+  .MainProfile {
+    padding: 18px 10px 84px;
+  }
+
+  .profile-header-container {
+    gap: 16px;
+    padding: 0 4px;
+    margin-bottom: 24px;
+  }
+
+  .profile-avatar {
+    width: 86px;
+    height: 86px;
+  }
+
+  .profile-actions {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .profile-username {
+    font-size: 17px;
+  }
+
+  .profile-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .profile-stats {
+    gap: 16px;
+    font-size: 13px;
+  }
+
+  .highlights-container {
+    gap: 14px;
+    padding: 0 8px 20px;
+  }
+
+  .highlight-bubble,
+  .highlight-add-bubble {
+    width: 62px;
+    height: 62px;
+  }
+
+  .profile-tabs {
+    gap: 20px;
+  }
+}

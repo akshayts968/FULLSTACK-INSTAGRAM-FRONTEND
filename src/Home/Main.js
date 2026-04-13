@@ -3,12 +3,10 @@ import './Main.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faBookmark, faPaperPlane, faFaceSmile } from '@fortawesome/free-regular-svg-icons';
-import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 import io from 'socket.io-client';
 import EmojiPicker from 'emoji-picker-react';
-import Dot3 from '../Profile/Dot3';
 import { fetchProfileByIdCached, setCachedProfile } from '../utils/profileCache';
 const socket = io(`${process.env.REACT_APP_SERVER}`);
 

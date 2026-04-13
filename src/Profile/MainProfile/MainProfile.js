@@ -26,6 +26,7 @@ function MainProfile(props) {
   const [edit, setEdit] = useState(false);
   const [addPost, setAddPost] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [taggedPosts, setTaggedPosts] = useState([]);
   const [user, setUser] = useState({});
   const [profileData, setProfileData] = useState({});
   const { username } = useParams();
@@ -91,6 +92,28 @@ function MainProfile(props) {
     fetchPosts();
   }, [username, addPost, edit]);
 
+  useEffect(() => {
+    const fetchTaggedPosts = async () => {
+      if (!profileData?._id) return;
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_SERVER}/post/all?viewerId=${User._id}`);
+        const allVisiblePosts = response.data.posts || [];
+        const tagged = allVisiblePosts.filter((post) =>
+          Array.isArray(post.taggedUsers) &&
+          post.taggedUsers.some((taggedId) => String(taggedId) === String(profileData._id))
+        );
+        setTaggedPosts(tagged);
+      } catch (error) {
+        console.error('Error fetching tagged posts:', error);
+        setTaggedPosts([]);
+      }
+    };
+
+    if (activeTab === 'TAGGED') {
+      fetchTaggedPosts();
+    }
+  }, [activeTab, profileData?._id, User?._id]);
+
   async function followADD() {
     if (!profileData._id) return;
     const response = await axios.put(`${process.env.REACT_APP_SERVER}/user/${profileData._id}/${User._id}`);
@@ -138,9 +161,11 @@ function MainProfile(props) {
   const displayPosts = posts.filter(post => {
     if (activeTab === 'POSTS') return !post.isReel;
     if (activeTab === 'REELS') return post.isReel;
-    if (activeTab === 'TAGGED') return post.taggedUsers && post.taggedUsers.includes(profileData._id);
+    if (activeTab === 'TAGGED') return false;
     return true;
   });
+
+  const finalDisplayPosts = activeTab === 'TAGGED' ? taggedPosts : displayPosts;
 
   return (
     <div className='MainProfile'>
@@ -247,7 +272,7 @@ function MainProfile(props) {
             width: '100%' }}>
             This account is private. Follow to view posts, reels, and tagged content.
           </div>
-        ) : displayPosts.map((post) => {
+        ) : finalDisplayPosts.map((post) => {
           // 1. Check if the URL string ends with a common video extension
           const isVideo = post.videourl && post.videourl.match(/\.(mp4|mov|webm|mkv)$/i);
 

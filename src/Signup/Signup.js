@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Signup.css';
 
 const SignUpForm = () => {
@@ -138,7 +138,7 @@ const SignUpForm = () => {
 
         <div className="signup-login-box">
           <p>
-            Have an account? <a href="/">Log in</a>
+            Have an account? <Link to="/login">Log in</Link>
           </p>
         </div>
       </div>

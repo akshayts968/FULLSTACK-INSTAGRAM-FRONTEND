@@ -4,7 +4,7 @@ import axios from 'axios';
 import Comment from './Comment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // ADDED Volume icons for the mute button
-import { faXmark, faHome, faHeart, faVolumeHigh, faVolumeXmark } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faHeart, faVolumeHigh, faVolumeXmark } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faBookmark, faPaperPlane, faFaceSmile } from '@fortawesome/free-regular-svg-icons';
 import Dot3 from '../Profile/Dot3';
 import DeletePost from '../Add/DeletePost';
